@@ -1,0 +1,3 @@
+export const SERVICES = {
+    ACCOUNTS_SERVICE: 'ACCOUNTS_SERVICE',
+}

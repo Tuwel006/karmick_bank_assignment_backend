@@ -1,44 +1,26 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps",
-  "compilerOptions": {
-    "deleteOutDir": true,
-    "webpack": true,
-    "tsConfigPath": "tsconfig.json"
-  },
   "monorepo": true,
-  "root": "apps/api-gateway",
+  "sourceRoot": "apps",
   "projects": {
     "api-gateway": {
       "type": "application",
       "root": "apps/api-gateway",
       "entryFile": "main",
-      "sourceRoot": "apps/api-gateway",
-      "compilerOptions": {
-        "deleteOutDir": true,
-        "webpack": true
-      }
+      "sourceRoot": "apps/api-gateway"
     },
     "accounts-service": {
       "type": "application",
       "root": "apps/accounts-service",
       "entryFile": "main",
-      "sourceRoot": "apps/accounts-service/src",
-      "compilerOptions": {
-        "deleteOutDir": true,
-        "webpack": true
-      }
+      "sourceRoot": "apps/accounts-service/src"
     },
     "users-service": {
       "type": "application",
       "root": "apps/users-service",
       "entryFile": "main",
-      "sourceRoot": "apps/users-service/src",
-      "compilerOptions": {
-        "deleteOutDir": true,
-        "webpack": true
-      }
+      "sourceRoot": "apps/users-service/src"
     }
   }
 }

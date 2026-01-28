@@ -9,10 +9,12 @@
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"utils/**/*.ts\"",
     "start": "nest start",
-    "dev": "concurrently -c \"cyan.bold,green.bold,magenta.bold\" \"npm:dev-api-gateway\" \"npm:dev-accounts-service\" \"npm:dev-users-service\"",
-    "dev-api-gateway": "nest start --watch api-gateway",
-    "dev-accounts-service": "nest start --watch accounts-service",
-    "dev-users-service": "nest start --watch users-service",
+    "dev": "concurrently \"npm:dev-api-gateway\" \"npm:dev-accounts-service\" \"npm:dev-users-service\"",
+
+    "dev-api-gateway": "nest start api-gateway --watch",
+    "dev-accounts-service": "nest start accounts-service --watch",
+    "dev-users-service": "nest start users-service --watch",
+
     "stg": "NODE_ENV=staging concurrently -c \"cyan.bold,green.bold,magenta.bold\" \"npm:stg-api-gateway\" \"npm:stg-accounts-service\" \"npm:stg-users-service\"",
     "stg-api-gateway": "node dist/apps/api-gateway/main",
     "stg-accounts-service": "node dist/apps/accounts-service/main",

@@ -7,6 +7,7 @@ import {
     Index,
 } from 'typeorm';
 import { UserStatus } from '../enums/user-status.enum';
+import { UserRole } from '@/utils/constants/roles.enum';
 
 @Entity({ name: 'users' })
 export class User {
@@ -21,6 +22,10 @@ export class User {
     @Column({ type: 'varchar', length: 150, unique: true, nullable: true })
     email?: string;
 
+    @Index({ unique: true })
+    @Column({ type: 'varchar', length: 50, unique: true, nullable: true })
+    username?: string;
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     passwordHash?: string;
 
@@ -32,6 +37,9 @@ export class User {
 
     @Column({ type: 'varchar', length: 20, nullable: true })
     customerId?: string;
+
+    @Column({ type: 'enum', enum: UserRole, default: UserRole.CUSTOMER })
+    role: UserRole;
 
     @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
     status: UserStatus;

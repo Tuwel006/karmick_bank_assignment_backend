@@ -3,19 +3,18 @@ import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const port = parseInt(process.env.USERS_SERVICE_PORT || '4002', 10);
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
       transport: Transport.TCP,
       options: {
         host: 'localhost',
-        port,
+        port: 3001,
       },
     },
   );
   await app.listen();
-  console.log('\n✅ Users Microservice is running on port', port, '\n');
+  console.log('Migration microservice is listening');
 }
 
 bootstrap();

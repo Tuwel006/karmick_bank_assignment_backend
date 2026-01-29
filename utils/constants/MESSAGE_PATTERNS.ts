@@ -12,6 +12,22 @@ export const MESSAGE_PATTERNS = {
     FIND_ONE: 'users.find_one',
     UPDATE: 'users.update',
     DELETE: 'users.delete',
+    FIND_BY_EMAIL_WITH_PASSWORD: 'users.find_by_email_with_password',
+  },
+  auth: {
+    CREATE: 'auth.create',
+    FIND_ALL: 'auth.find_all',
+    FIND_ONE: 'auth.find_one',
+    UPDATE: 'auth.update',
+    DELETE: 'auth.delete',
+    LOGIN: 'auth.login',
+  },
+  migration: {
+    CREATE: 'migration.create',
+    FIND_ALL: 'migration.find_all',
+    FIND_ONE: 'migration.find_one',
+    UPDATE: 'migration.update',
+    DELETE: 'migration.delete',
   },
   customer: {
     CREATE: 'customer.create',

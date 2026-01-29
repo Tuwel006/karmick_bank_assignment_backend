@@ -7,7 +7,7 @@ import { UpdateUsersDto } from './dto/update-users.dto';
 
 @Controller()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @MessagePattern(MESSAGE_PATTERNS.users.CREATE)
   create(@Payload() createUsersDto: CreateUsersDto) {
@@ -32,5 +32,10 @@ export class UsersController {
   @MessagePattern(MESSAGE_PATTERNS.users.DELETE)
   remove(@Payload() data: any) {
     return this.usersService.remove(data.id);
+  }
+
+  @MessagePattern(MESSAGE_PATTERNS.users.FIND_BY_EMAIL_WITH_PASSWORD)
+  findByEmailWithPassword(@Payload() data: { email: string }) {
+    return this.usersService.findByEmailWithPassword(data.email);
   }
 }

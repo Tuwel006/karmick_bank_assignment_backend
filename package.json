@@ -10,11 +10,9 @@
     "format": "prettier --write \"apps/**/*.ts\" \"utils/**/*.ts\"",
     "start": "nest start",
     "dev": "concurrently \"npm:dev-api-gateway\" \"npm:dev-accounts-service\" \"npm:dev-users-service\"",
-
     "dev-api-gateway": "nest start api-gateway --watch",
     "dev-accounts-service": "nest start accounts-service --watch",
     "dev-users-service": "nest start users-service --watch",
-
     "stg": "NODE_ENV=staging concurrently -c \"cyan.bold,green.bold,magenta.bold\" \"npm:stg-api-gateway\" \"npm:stg-accounts-service\" \"npm:stg-users-service\"",
     "stg-api-gateway": "node dist/apps/api-gateway/main",
     "stg-accounts-service": "node dist/apps/accounts-service/main",
@@ -38,10 +36,13 @@
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/microservices": "^11.1.12",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/typeorm": "^11.0.0",
     "concurrently": "^9.2.0",
     "dotenv": "^17.2.0",
+    "pg": "^8.17.2",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.28"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

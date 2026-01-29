@@ -1,11 +1,7 @@
+import './load-env';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-
-const envFile = path.resolve(__dirname, '../../../.env.' + (process.env.NODE_ENV || 'dev'));
-dotenv.config({ path: envFile });
 
 async function bootstrap() {
   const port = parseInt(process.env.ACCOUNTS_SERVICE_PORT || '3001', 10);

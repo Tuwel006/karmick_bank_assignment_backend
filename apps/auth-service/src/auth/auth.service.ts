@@ -1,6 +1,6 @@
 import { Injectable, Inject, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@/utils/constants/MESSAGE_PATTERNS';
 import * as bcrypt from 'bcrypt';
 import { firstValueFrom } from 'rxjs';
@@ -12,13 +12,20 @@ export class AuthService {
     @Inject('USERS_SERVICE') private readonly usersClient: ClientProxy,
     private readonly jwtService: JwtService,
   ) { }
-
   async register(createAuthDto: CreateAuthDto) {
-    const { password, ...userData } = createAuthDto as any;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = { ...userData, passwordHash: hashedPassword };
+    try {
+      const { password, ...userData } = createAuthDto as any;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = { ...userData, passwordHash: hashedPassword };
 
-    return await firstValueFrom(this.usersClient.send(MESSAGE_PATTERNS.users.CREATE, newUser));
+      return await firstValueFrom(this.usersClient.send(MESSAGE_PATTERNS.users.CREATE, newUser));
+    } catch (error) {
+      if (error && error.status === 409) {
+        throw new RpcException({ status: 409, message: error.message });
+      }
+      console.error('Registration Error:', error);
+      throw new RpcException({ status: 500, message: error.message || 'Registration failed' });
+    }
   }
 
   async login(loginDto: any) {

@@ -1,12 +1,14 @@
 import { NestFactory } from "@nestjs/core";
 import { ApiGatewayModule } from "./api-gateway.module";
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   const config = new DocumentBuilder()
     .setTitle('Banking System API')

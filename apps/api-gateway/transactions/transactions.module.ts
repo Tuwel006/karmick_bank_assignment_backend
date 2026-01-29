@@ -11,7 +11,7 @@ import { TransactionsService } from './transactions.service';
         transport: Transport.TCP,
         options: {
           host: 'localhost',
-          port: 3001,
+          port: parseInt(process.env.TRANSACTIONS_SERVICE_PORT || '4003', 10),
         },
       },
     ]),
@@ -19,4 +19,4 @@ import { TransactionsService } from './transactions.service';
   controllers: [TransactionsController],
   providers: [TransactionsService],
 })
-export class TransactionsModule {}
+export class TransactionsModule { }

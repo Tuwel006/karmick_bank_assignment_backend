@@ -22,17 +22,35 @@
       "entryFile": "main",
       "sourceRoot": "apps/users-service/src"
     },
-    "main": {
-      "type": "application",
-      "root": ".",
-      "entryFile": "main",
-      "sourceRoot": "src"
-    },
     "auth-service": {
       "type": "application",
       "root": "apps/auth-service",
       "entryFile": "main",
       "sourceRoot": "apps/auth-service/src"
+    },
+    "notification-service": {
+      "type": "application",
+      "root": "apps/notification-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/notification-service/src"
+    },
+    "transactions-service": {
+      "type": "application",
+      "root": "apps/transactions-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/transactions-service/src"
+    },
+    "customer-service": {
+      "type": "application",
+      "root": "apps/customer-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/customer-service/src"
+    },
+    "migration-service": {
+      "type": "application",
+      "root": "apps/migration-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/migration-service/src"
     }
   }
 }

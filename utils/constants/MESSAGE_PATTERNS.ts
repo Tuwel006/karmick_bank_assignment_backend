@@ -43,4 +43,11 @@ export const MESSAGE_PATTERNS = {
     UPDATE: 'transactions.update',
     DELETE: 'transactions.delete',
   },
+  notification: {
+    CREATE: 'notification.create',
+    FIND_ALL: 'notification.find_all',
+    FIND_ONE: 'notification.find_one',
+    UPDATE: 'notification.update',
+    DELETE: 'notification.delete',
+  },
 };

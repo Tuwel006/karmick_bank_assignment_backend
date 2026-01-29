@@ -9,12 +9,12 @@ async function bootstrap() {
       transport: Transport.TCP,
       options: {
         host: 'localhost',
-        port: parseInt(process.env.TRANSACTIONS_SERVICE_PORT || '4003', 10),
+        port: parseInt(process.env.NOTIFICATION_SERVICE_PORT || '4007', 10),
       },
     },
   );
   await app.listen();
-  console.log('Transactions microservice is listening');
+  console.log('Notification microservice is listening');
 }
 
 bootstrap();

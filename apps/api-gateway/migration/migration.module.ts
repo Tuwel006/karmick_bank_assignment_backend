@@ -11,7 +11,7 @@ import { MigrationService } from './migration.service';
         transport: Transport.TCP,
         options: {
           host: 'localhost',
-          port: 3001,
+          port: parseInt(process.env.MIGRATION_SERVICE_PORT || '4006', 10),
         },
       },
     ]),
@@ -19,4 +19,4 @@ import { MigrationService } from './migration.service';
   controllers: [MigrationController],
   providers: [MigrationService],
 })
-export class MigrationModule {}
+export class MigrationModule { }

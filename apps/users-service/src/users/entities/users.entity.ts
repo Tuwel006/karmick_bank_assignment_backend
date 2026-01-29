@@ -1,25 +1,47 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    Index,
+} from 'typeorm';
+import { UserStatus } from '../enums/user-status.enum';
 
-@Entity('users')
+@Entity({ name: 'users' })
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    @Column({ unique: true })
-    username: string;
+    @Index({ unique: true })
+    @Column({ type: 'varchar', length: 15, unique: true, nullable: true })
+    phone?: string;
 
-    @Column({ unique: true })
-    email: string;
+    @Index({ unique: true })
+    @Column({ type: 'varchar', length: 150, unique: true, nullable: true })
+    email?: string;
 
-    @Column({ select: false })
-    password: string;
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    passwordHash?: string;
 
-    @Column({ default: true })
-    isActive: boolean;
+    @Column({ type: 'boolean', default: false })
+    isPhoneVerified: boolean;
 
-    @CreateDateColumn()
+    @Column({ type: 'boolean', default: false })
+    isEmailVerified: boolean;
+
+    @Column({ type: 'varchar', length: 20, nullable: true })
+    customerId?: string;
+
+    @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
+    status: UserStatus;
+
+    @Column({ type: 'timestamptz', nullable: true })
+    lastLoginAt?: Date;
+
+    @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: 'timestamptz' })
     updatedAt: Date;
 }

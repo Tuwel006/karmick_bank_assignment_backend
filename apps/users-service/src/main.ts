@@ -1,4 +1,3 @@
-import './load-env'; // Must be first to load env vars before other imports
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';

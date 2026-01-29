@@ -26,6 +26,8 @@ export const databaseConfig = {
     pool_mode: process.env.USERS_DB_POOL_MODE || 'transaction',
 };
 
-// Mask password for safe logging
-const maskedConfig = { ...databaseConfig, password: databaseConfig.password ? '****' : 'EMPTY' };
-console.log('📦 Database Config Initialized:', maskedConfig);
+// Log confirmation (without leaking actual password)
+console.log('📦 Database Config:');
+console.log(`   - User: ${databaseConfig.user}`);
+console.log(`   - Host: ${databaseConfig.host}`);
+console.log(`   - Password: ${databaseConfig.password ? '✅ Loaded (Secure)' : '❌ EMPTY'}`);

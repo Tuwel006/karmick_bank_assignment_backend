@@ -21,16 +21,16 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number) {
-    return await this.userRepository.findOneBy({ id });
+  async findOne(id: string) {
+    return await this.userRepository.findOneBy({ id } as any);
   }
 
-  async update(id: number, updateUsersDto: UpdateUsersDto) {
+  async update(id: string, updateUsersDto: UpdateUsersDto) {
     await this.userRepository.update(id, updateUsersDto);
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return await this.userRepository.delete(id);
   }
 }

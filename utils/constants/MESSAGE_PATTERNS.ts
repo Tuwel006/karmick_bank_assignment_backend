@@ -13,4 +13,18 @@ export const MESSAGE_PATTERNS = {
     UPDATE: 'users.update',
     DELETE: 'users.delete',
   },
+  customer: {
+    CREATE: 'customer.create',
+    FIND_ALL: 'customer.find_all',
+    FIND_ONE: 'customer.find_one',
+    UPDATE: 'customer.update',
+    DELETE: 'customer.delete',
+  },
+  transactions: {
+    CREATE: 'transactions.create',
+    FIND_ALL: 'transactions.find_all',
+    FIND_ONE: 'transactions.find_one',
+    UPDATE: 'transactions.update',
+    DELETE: 'transactions.delete',
+  },
 };

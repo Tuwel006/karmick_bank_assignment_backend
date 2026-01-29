@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"utils/**/*.ts\"",
     "start": "nest start",
-    "dev": "concurrently \"npm:dev-api-gateway\" \"npm:dev-accounts-service\" \"npm:dev-users-service\"",
+    "dev": "nest start main --watch",
     "dev-api-gateway": "nest start api-gateway --watch",
     "dev-accounts-service": "nest start accounts-service --watch",
     "dev-users-service": "nest start users-service --watch",

@@ -1,8 +1,10 @@
 import { NestFactory } from "@nestjs/core";
 import { ApiGatewayModule } from "./api-gateway.module";
+import * as path from "path";
 import * as dotenv from "dotenv";
 
-dotenv.config();
+const envMode = process.env.NODE_ENV || 'dev';
+dotenv.config({ path: path.resolve(process.cwd(), `.env.${envMode}`) });
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);

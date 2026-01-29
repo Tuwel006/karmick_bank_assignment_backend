@@ -1,13 +1,24 @@
 import { NestFactory } from "@nestjs/core";
 import { ApiGatewayModule } from "./api-gateway.module";
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
-  const port = process.env.API_GATEWAY_PORT || 3000;
+
+  const config = new DocumentBuilder()
+    .setTitle('Banking System API')
+    .setDescription('The Banking System API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  const port = process.env.API_GATEWAY_PORT || 4000;
   await app.listen(port);
-  console.log(`API Gateway is running on port ${port}`);
+  console.log(`API Gateway is running on http://localhost:${port}/api`);
 }
 bootstrap();

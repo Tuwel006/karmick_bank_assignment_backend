@@ -11,7 +11,7 @@ import { AccountsService } from './accounts.service';
         transport: Transport.TCP,
         options: {
           host: 'localhost',
-          port: parseInt(process.env.ACCOUNTS_SERVICE_PORT || '3001', 10),
+          port: parseInt(process.env.ACCOUNTS_SERVICE_PORT || '4001', 10),
         },
       },
     ]),
@@ -19,4 +19,4 @@ import { AccountsService } from './accounts.service';
   controllers: [AccountsController],
   providers: [AccountsService],
 })
-export class AccountsModule {}
+export class AccountsModule { }

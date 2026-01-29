@@ -21,6 +21,12 @@
       "root": "apps/users-service",
       "entryFile": "main",
       "sourceRoot": "apps/users-service/src"
+    },
+    "auth-service": {
+      "type": "application",
+      "root": "apps/auth-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth-service/src"
     }
   }
 }

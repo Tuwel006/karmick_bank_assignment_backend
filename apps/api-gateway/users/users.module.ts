@@ -11,7 +11,7 @@ import { UsersService } from './users.service';
         transport: Transport.TCP,
         options: {
           host: 'localhost',
-          port: parseInt(process.env.USERS_SERVICE_PORT || '3002', 10),
+          port: parseInt(process.env.USERS_SERVICE_PORT || '4002', 10),
         },
       },
     ]),
@@ -19,4 +19,4 @@ import { UsersService } from './users.service';
   controllers: [UsersController],
   providers: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule { }

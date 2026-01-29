@@ -33,4 +33,11 @@ export class UsersService {
   async remove(id: string) {
     return await this.userRepository.delete(id);
   }
+
+  async findByEmailWithPassword(email: string) {
+    return await this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'username', 'email', 'password', 'role', 'isActive', 'createdAt', 'updatedAt'],
+    });
+  }
 }

@@ -37,7 +37,7 @@ export class UsersService {
   async findByEmailWithPassword(email: string) {
     return await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'username', 'email', 'password', 'role', 'isActive', 'createdAt', 'updatedAt'],
+      select: ['id', 'username', 'email', 'passwordHash', 'role', 'phone', 'isPhoneVerified', 'isEmailVerified', 'customerId', 'status', 'createdAt', 'updatedAt'],
     });
   }
 }

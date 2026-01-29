@@ -1,9 +1,13 @@
 import { UserRole } from '@/utils/constants/roles.enum';
 
 export class CreateUsersDto {
-    username: string;
+    username?: string;
     email: string;
-    password?: string;
-    role?: UserRole;
-    isActive?: boolean;
+    passwordHash?: string;
+    role?: any;
+    phone?: string;
+    isPhoneVerified?: boolean;
+    isEmailVerified?: boolean;
+    customerId?: string;
+    status?: any;
 }

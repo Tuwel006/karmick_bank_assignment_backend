@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
     password: databaseConfig.password,
     database: databaseConfig.database,
     entities: [User, BankAccount, Transaction, LedgerEntry, Customer],
-    synchronize: true, // Only for dev
+    synchronize: false, // Turn off to prevent sync conflicts between services
     logging: false,
     ssl: {
         rejectUnauthorized: false,

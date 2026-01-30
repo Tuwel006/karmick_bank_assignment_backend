@@ -60,13 +60,7 @@ export class User {
     @JoinColumn({ name: 'branch_id' })
     branch: Branch;
 
-    @Column({ nullable: true })
-    branchId: string;
-
     @ManyToOne(() => RoleEntity, (role) => role.users, { nullable: true })
     @JoinColumn({ name: 'role_id' })
     roleEntity: RoleEntity;
-
-    @Column({ nullable: true })
-    roleId: string;
 }

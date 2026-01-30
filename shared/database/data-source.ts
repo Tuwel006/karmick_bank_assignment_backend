@@ -20,7 +20,7 @@ export const AppDataSource = new DataSource({
     password: databaseConfig.password,
     database: databaseConfig.database,
     entities: [User, BankAccount, Transaction, LedgerEntry, Customer, Branch, Role, SystemModule, Permission, Notification, AccountProduct],
-    migrations: ['shared/database/migrations/*.ts'],
+
     synchronize: false, // Turn off to prevent sync conflicts or pooler issues
     logging: false,
     ssl: {

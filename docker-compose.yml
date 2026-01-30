@@ -2,6 +2,9 @@ version: '3.8'
 
 services:
   api-gateway:
+    env_file:
+      - .env
+    restart: always
     build:
       context: .
       args:
@@ -34,6 +37,9 @@ services:
       - bank-network
 
   accounts-service:
+    env_file:
+      - .env
+    restart: always
     build:
       context: .
       args:
@@ -45,6 +51,9 @@ services:
       - bank-network
 
   auth-service:
+    env_file:
+      - .env
+    restart: always
     build:
       context: .
       args:
@@ -56,6 +65,9 @@ services:
       - bank-network
 
   customer-service:
+    env_file:
+      - .env
+    restart: always
     build:
       context: .
       args:
@@ -67,6 +79,9 @@ services:
       - bank-network
 
   migration-service:
+    env_file:
+      - .env
+    restart: always
     build:
       context: .
       args:
@@ -78,6 +93,9 @@ services:
       - bank-network
 
   notification-service:
+    env_file:
+      - .env
+    restart: always
     build:
       context: .
       args:
@@ -89,6 +107,9 @@ services:
       - bank-network
 
   transactions-service:
+    env_file:
+      - .env
+    restart: always
     build:
       context: .
       args:
@@ -100,6 +121,9 @@ services:
       - bank-network
 
   users-service:
+    env_file:
+      - .env
+    restart: always
     build:
       context: .
       args:

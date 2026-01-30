@@ -1,12 +1,13 @@
-import { NestFactory } from "@nestjs/core";
-import { ApiGatewayModule } from "./api-gateway.module";
-import * as path from "path";
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import * as dotenv from "dotenv";
+import * as path from "path";
 
 const envMode = process.env.NODE_ENV || 'dev';
 dotenv.config({ path: path.resolve(process.cwd(), `.env.${envMode}`) });
+
+import { NestFactory } from "@nestjs/core";
+import { ApiGatewayModule } from "./api-gateway.module";
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);

@@ -5,11 +5,12 @@ import { TransactionsController } from './transactions.controller';
 import { Transaction } from './entities/transactions.entity';
 import { LedgerEntry } from './entities/ledger.entity';
 import { DatabaseModule } from '../../../../shared/database/database.module';
+import { BankAccount } from '../../../accounts-service/src/accounts/entities/bank-account.entity';
 
 @Module({
   imports: [
     DatabaseModule,
-    TypeOrmModule.forFeature([Transaction, LedgerEntry]),
+    TypeOrmModule.forFeature([Transaction, LedgerEntry, BankAccount]),
   ],
   controllers: [TransactionsController],
   providers: [TransactionsService],

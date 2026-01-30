@@ -1,0 +1,18 @@
+Table Name,Purpose,Primary Key (PK),Foreign Keys (FK) & Relationships,Key Columns
+users,Stores authentication credentials and core user identity information for system access.,id (UUID),"branchId -> branches.id
+role -> roles.name (Logical linkage)",email, passwordHash, phone, role, status
+customers,Stores detailed personal and KYC (Know Your Customer) information for banking customers linked to a user.,id (UUID),userId -> users.id,firstName, lastName, panNumber, aadharNumber, kycStatus, dateOfBirth
+bank_accounts,Represents bank accounts holding actual balances. Linked to products for rules.,id (UUID),"userId -> users.id
+branchId -> branches.id
+productId -> account_products.id",accountNumber, ifscCode, productId, branchId, accountType (Legacy), balance, status
+account_products,Defines banking products with specific rules (limits, balances) for different account types.,id (UUID),-,name, code, productType, minDailyBalance, minMonthlyAverageBalance, dailyTransactionLimit, monthlyTransactionLimit, allowsOverdraft, overdraftLimit
+transactions,Records every financial event (Deposit, Withdrawal, Transfer) as a single logical unit.,id (UUID),"fromAccountId -> bank_accounts.id
+toAccountId -> bank_accounts.id",txnRef, type, amount, status, narration
+ledger_entries,Implements double-entry bookkeeping. A single transaction creates two ledger entries.,id (UUID),"transactionId -> transactions.id
+accountId -> bank_accounts.id",entryType (DEBIT/CREDIT), amount, balanceBefore, balanceAfter
+branches,Finds physical bank branch details including IFSC codes and addresses.,id (UUID),-,ifsc, name, address, city, state, pincode
+roles,Defines roles available in the system (e.g. Admin, Manager, Customer) for RBAC.,id (UUID),-,name, description
+permissions,Defines granular access rights (Create, Read, Update, Delete) for a Role on a specific Module.,id (UUID),"roleId -> roles.id
+moduleId -> system_modules.id",canCreate, canUpdate, canDelete, canGet
+system_modules,Catalog of system components (e.g. 'Accounts', 'Users') used to assign permissions.,id (UUID),-,name
+notifications,Stores history of alerts and messages sent to users.,id (UUID),userId -> users.id,title, message, type (INFO/WARNING), status (READ/UNREAD)

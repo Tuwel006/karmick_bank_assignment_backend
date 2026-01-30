@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { Notification, NotificationStatus } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationService {
-  create(createNotificationDto: CreateNotificationDto) {
-    return 'This action adds a new notification';
+  constructor(
+    @InjectRepository(Notification)
+    private readonly notificationRepository: Repository<Notification>,
+  ) { }
+
+  async create(createNotificationDto: CreateNotificationDto) {
+    const notification = this.notificationRepository.create(createNotificationDto);
+    return await this.notificationRepository.save(notification);
   }
 
-  findAll() {
-    return `This action returns all notification`;
+  async findAll() {
+    return await this.notificationRepository.find({ order: { createdAt: 'DESC' } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
+  async findOne(id: string) {
+    const notification = await this.notificationRepository.findOne({ where: { id } });
+    if (!notification) throw new NotFoundException(`Notification ${id} not found`);
+    return notification;
   }
 
-  update(id: number, updateNotificationDto: UpdateNotificationDto) {
-    return `This action updates a #${id} notification`;
+  async findByUserId(userId: string) {
+    return await this.notificationRepository.find({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
+  async update(id: string, updateNotificationDto: UpdateNotificationDto) {
+    await this.notificationRepository.update(id, updateNotificationDto);
+    return this.findOne(id);
+  }
+
+  async markAsRead(id: string) {
+    await this.notificationRepository.update(id, { status: NotificationStatus.READ });
+    return this.findOne(id);
+  }
+
+  async remove(id: string) {
+    return await this.notificationRepository.delete(id);
   }
 }

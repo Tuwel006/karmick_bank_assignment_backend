@@ -9,6 +9,8 @@ import { Branch } from '../../apps/users-service/src/branch/entities/branch.enti
 import { Role } from '../../apps/users-service/src/roles/entities/role.entity';
 import { SystemModule } from '../../apps/users-service/src/system-modules/entities/system-module.entity';
 import { Permission } from '../../apps/users-service/src/permissions/entities/permission.entity';
+import { Notification } from '../../apps/notification-service/src/notification/entities/notification.entity';
+import { AccountProduct } from '../../apps/accounts-service/src/accounts/entities/account-product.entity';
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
@@ -17,7 +19,8 @@ export const AppDataSource = new DataSource({
     username: databaseConfig.user,
     password: databaseConfig.password,
     database: databaseConfig.database,
-    entities: [User, BankAccount, Transaction, LedgerEntry, Customer, Branch, Role, SystemModule, Permission],
+    entities: [User, BankAccount, Transaction, LedgerEntry, Customer, Branch, Role, SystemModule, Permission, Notification, AccountProduct],
+    migrations: ['shared/database/migrations/*.ts'],
     synchronize: false, // Turn off to prevent sync conflicts or pooler issues
     logging: false,
     ssl: {

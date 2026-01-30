@@ -8,6 +8,9 @@ import {
 } from 'typeorm';
 import { UserStatus } from '../enums/user-status.enum';
 import { UserRole } from '@/utils/constants/roles.enum';
+import { Branch } from '../../branch/entities/branch.entity';
+import { Role as RoleEntity } from '../../roles/entities/role.entity';
+import { ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'users' })
 export class User {
@@ -52,4 +55,18 @@ export class User {
 
     @UpdateDateColumn({ type: 'timestamptz' })
     updatedAt: Date;
+
+    @ManyToOne(() => Branch, (branch) => branch.users, { nullable: true })
+    @JoinColumn({ name: 'branch_id' })
+    branch: Branch;
+
+    @Column({ nullable: true })
+    branchId: string;
+
+    @ManyToOne(() => RoleEntity, (role) => role.users, { nullable: true })
+    @JoinColumn({ name: 'role_id' })
+    roleEntity: RoleEntity;
+
+    @Column({ nullable: true })
+    roleId: string;
 }

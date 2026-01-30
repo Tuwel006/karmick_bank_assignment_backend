@@ -52,6 +52,7 @@ export class UsersService {
   }
 
   async findByEmailWithPassword(email: string) {
+    console.log('UsersService: Finding user by email:', email);
     return await this.userRepository.findOne({
       where: { email },
       select: ['id', 'username', 'email', 'passwordHash', 'role', 'phone', 'isPhoneVerified', 'isEmailVerified', 'customerId', 'status', 'createdAt', 'updatedAt'],

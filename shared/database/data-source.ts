@@ -5,6 +5,10 @@ import { BankAccount } from '../../apps/accounts-service/src/accounts/entities/b
 import { Transaction } from '../../apps/transactions-service/src/transactions/entities/transactions.entity';
 import { LedgerEntry } from '../../apps/transactions-service/src/transactions/entities/ledger.entity';
 import { Customer } from '../../apps/customer-service/src/customer/entities/customer.entity';
+import { Branch } from '../../apps/users-service/src/branch/entities/branch.entity';
+import { Role } from '../../apps/users-service/src/roles/entities/role.entity';
+import { SystemModule } from '../../apps/users-service/src/system-modules/entities/system-module.entity';
+import { Permission } from '../../apps/users-service/src/permissions/entities/permission.entity';
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
@@ -13,8 +17,8 @@ export const AppDataSource = new DataSource({
     username: databaseConfig.user,
     password: databaseConfig.password,
     database: databaseConfig.database,
-    entities: [User, BankAccount, Transaction, LedgerEntry, Customer],
-    synchronize: false, // Turn off to prevent sync conflicts between services
+    entities: [User, BankAccount, Transaction, LedgerEntry, Customer, Branch, Role, SystemModule, Permission],
+    synchronize: false, // Turn off to prevent sync conflicts or pooler issues
     logging: false,
     ssl: {
         rejectUnauthorized: false,

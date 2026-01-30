@@ -29,28 +29,36 @@ export class AuthService {
   }
 
   async login(loginDto: any) {
-    const user = await firstValueFrom(
-      this.usersClient.send(MESSAGE_PATTERNS.users.FIND_BY_EMAIL_WITH_PASSWORD, { email: loginDto.email })
-    );
+    console.log('Login attempt for:', loginDto.email);
+    try {
+      const user = await firstValueFrom(
+        this.usersClient.send(MESSAGE_PATTERNS.users.FIND_BY_EMAIL_WITH_PASSWORD, { email: loginDto.email })
+      );
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      console.log('Service response for user:', user ? 'FOUND' : 'NOT FOUND');
+
+      if (!user) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const isMatch = await bcrypt.compare(loginDto.password, user.passwordHash || '');
+      if (!isMatch) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const payload = { sub: user.id, username: user.username, email: user.email, role: user.role, status: user.status };
+      const access_token = this.jwtService.sign(payload);
+
+      // Remove sensitive data from response
+      const { passwordHash, ...result } = user;
+      return {
+        access_token,
+        user: result
+      };
+    } catch (error) {
+      console.error('Login Error:', error);
+      throw error;
     }
-
-    const isMatch = await bcrypt.compare(loginDto.password, user.passwordHash);
-    if (!isMatch) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const payload = { sub: user.id, username: user.username, email: user.email, role: user.role, status: user.status };
-    const access_token = this.jwtService.sign(payload);
-
-    // Remove sensitive data from response
-    const { passwordHash, ...result } = user;
-    return {
-      access_token,
-      user: result
-    };
   }
 
   findAll() {

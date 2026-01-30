@@ -10,7 +10,7 @@ import { UsersService } from './users.service';
         name: 'USERS_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
+          host: process.env.USERS_SERVICE_HOST || 'localhost',
           port: parseInt(process.env.USERS_SERVICE_PORT || '4002', 10),
         },
       },

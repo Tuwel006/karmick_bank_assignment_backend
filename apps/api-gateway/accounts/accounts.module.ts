@@ -10,7 +10,7 @@ import { AccountsService } from './accounts.service';
         name: 'ACCOUNTS_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
+          host: process.env.ACCOUNTS_SERVICE_HOST || 'localhost',
           port: parseInt(process.env.ACCOUNTS_SERVICE_PORT || '4001', 10),
         },
       },

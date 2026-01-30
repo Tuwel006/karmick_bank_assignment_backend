@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      args:
+        APP_NAME: api-gateway
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=prod
+      - API_GATEWAY_PORT=4000
+      - ACCOUNTS_SERVICE_HOST=accounts-service
+      - ACCOUNTS_SERVICE_PORT=4001
+      - AUTH_SERVICE_HOST=auth-service
+      - AUTH_SERVICE_PORT=4005
+      - CUSTOMER_SERVICE_HOST=customer-service
+      - CUSTOMER_SERVICE_PORT=4004
+      - NOTIFICATION_SERVICE_HOST=notification-service
+      - NOTIFICATION_SERVICE_PORT=4007
+      - TRANSACTIONS_SERVICE_HOST=transactions-service
+      - TRANSACTIONS_SERVICE_PORT=4003
+      - USERS_SERVICE_HOST=users-service
+      - USERS_SERVICE_PORT=4002
+    depends_on:
+      - accounts-service
+      - auth-service
+      - customer-service
+      - notification-service
+      - transactions-service
+      - users-service
+    networks:
+      - bank-network
+
+  accounts-service:
+    build:
+      context: .
+      args:
+        APP_NAME: accounts-service
+    environment:
+      - NODE_ENV=prod
+      - ACCOUNTS_SERVICE_PORT=4001
+    networks:
+      - bank-network
+
+  auth-service:
+    build:
+      context: .
+      args:
+        APP_NAME: auth-service
+    environment:
+      - NODE_ENV=prod
+      - AUTH_SERVICE_PORT=4005
+    networks:
+      - bank-network
+
+  customer-service:
+    build:
+      context: .
+      args:
+        APP_NAME: customer-service
+    environment:
+      - NODE_ENV=prod
+      - CUSTOMER_SERVICE_PORT=4004
+    networks:
+      - bank-network
+
+  migration-service:
+    build:
+      context: .
+      args:
+        APP_NAME: migration-service
+    environment:
+      - NODE_ENV=prod
+      - MIGRATION_SERVICE_PORT=4006
+    networks:
+      - bank-network
+
+  notification-service:
+    build:
+      context: .
+      args:
+        APP_NAME: notification-service
+    environment:
+      - NODE_ENV=prod
+      - NOTIFICATION_SERVICE_PORT=4007
+    networks:
+      - bank-network
+
+  transactions-service:
+    build:
+      context: .
+      args:
+        APP_NAME: transactions-service
+    environment:
+      - NODE_ENV=prod
+      - TRANSACTIONS_SERVICE_PORT=4003
+    networks:
+      - bank-network
+
+  users-service:
+    build:
+      context: .
+      args:
+        APP_NAME: users-service
+    environment:
+      - NODE_ENV=prod
+      - USERS_SERVICE_PORT=4002
+    networks:
+      - bank-network
+
+networks:
+  bank-network:
+    driver: bridge

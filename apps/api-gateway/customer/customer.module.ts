@@ -10,8 +10,8 @@ import { CustomerService } from './customer.service';
         name: 'CUSTOMER_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 3001,
+          host: process.env.CUSTOMER_SERVICE_HOST || 'localhost',
+          port: parseInt(process.env.CUSTOMER_SERVICE_PORT || '4004', 10),
         },
       },
     ]),
@@ -19,4 +19,4 @@ import { CustomerService } from './customer.service';
   controllers: [CustomerController],
   providers: [CustomerService],
 })
-export class CustomerModule {}
+export class CustomerModule { }

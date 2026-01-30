@@ -10,7 +10,7 @@ import { NotificationService } from './notification.service';
         name: 'NOTIFICATION_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
+          host: process.env.NOTIFICATION_SERVICE_HOST || 'localhost',
           port: parseInt(process.env.NOTIFICATION_SERVICE_PORT || '4007', 10),
         },
       },

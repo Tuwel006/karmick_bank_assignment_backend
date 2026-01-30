@@ -10,7 +10,7 @@ import { TransactionsService } from './transactions.service';
         name: 'TRANSACTIONS_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
+          host: process.env.TRANSACTIONS_SERVICE_HOST || 'localhost',
           port: parseInt(process.env.TRANSACTIONS_SERVICE_PORT || '4003', 10),
         },
       },

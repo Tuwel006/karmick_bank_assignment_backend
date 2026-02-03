@@ -1,36 +1,56 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
-import { MESSAGE_PATTERNS } from '@/utils/constants/MESSAGE_PATTERNS';
-import { CustomerService } from './customer.service';
-import { CreateCustomerDto } from './dto/create-customer.dto';
-import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { CustomerService, CreateCustomerDto } from './customer.service';
+import { RequirePermissions } from '../../../../shared/guards/permissions.decorator';
+import { PermissionsGuard } from '../../../../shared/guards/permissions.guard';
 
-@Controller()
+@ApiTags('Customers')
+@ApiBearerAuth()
+@Controller('customers')
+@UseGuards(PermissionsGuard)
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @MessagePattern(MESSAGE_PATTERNS.customer.CREATE)
-  create(@Payload() createCustomerDto: CreateCustomerDto) {
+  @Post()
+  @RequirePermissions('customer', 'canCreate')
+  @ApiOperation({ summary: 'Create new customer' })
+  @ApiResponse({ status: 201, description: 'Customer created successfully' })
+  async create(@Body() createCustomerDto: CreateCustomerDto) {
     return this.customerService.create(createCustomerDto);
   }
 
-  @MessagePattern(MESSAGE_PATTERNS.customer.FIND_ALL)
-  findAll() {
-    return this.customerService.findAll();
+  @Get()
+  @RequirePermissions('customer', 'canGet')
+  @ApiOperation({ summary: 'Get all customers with filters' })
+  @ApiResponse({ status: 200, description: 'Customers retrieved successfully' })
+  async findAll(
+    @Query('branchId') branchId?: string,
+    @Query() pagination?: any
+  ) {
+    return this.customerService.findAll(branchId, pagination);
   }
 
-  @MessagePattern(MESSAGE_PATTERNS.customer.FIND_ONE)
-  findOne(@Payload() data: any) {
-    return this.customerService.findOne(data.id);
+  @Get(':id')
+  @RequirePermissions('customer', 'canGet')
+  @ApiOperation({ summary: 'Get customer by ID' })
+  @ApiResponse({ status: 200, description: 'Customer retrieved successfully' })
+  async findOne(@Param('id') id: string) {
+    return this.customerService.findOne(id);
   }
 
-  @MessagePattern(MESSAGE_PATTERNS.customer.UPDATE)
-  update(@Payload() data: any) {
-    return this.customerService.update(data.id, data);
+  @Patch(':id')
+  @RequirePermissions('customer', 'canUpdate')
+  @ApiOperation({ summary: 'Update customer' })
+  @ApiResponse({ status: 200, description: 'Customer updated successfully' })
+  async update(@Param('id') id: string, @Body() updateCustomerDto: Partial<CreateCustomerDto>) {
+    return this.customerService.update(id, updateCustomerDto);
   }
 
-  @MessagePattern(MESSAGE_PATTERNS.customer.DELETE)
-  remove(@Payload() data: any) {
-    return this.customerService.remove(data.id);
+  @Get(':id/kyc-status')
+  @RequirePermissions('customer', 'canGet')
+  @ApiOperation({ summary: 'Get customer KYC status' })
+  @ApiResponse({ status: 200, description: 'KYC status retrieved successfully' })
+  async getKycStatus(@Param('id') id: string) {
+    return this.customerService.getKycStatus(id);
   }
 }

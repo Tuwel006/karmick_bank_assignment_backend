@@ -6,6 +6,7 @@ import { Transaction } from '../../apps/transactions-service/src/transactions/en
 import { LedgerEntry } from '../../apps/transactions-service/src/transactions/entities/ledger.entity';
 import { Customer } from '../../apps/customer-service/src/customer/entities/customer.entity';
 import { Branch } from '../../apps/users-service/src/branch/entities/branch.entity';
+import { Address } from '../../apps/users-service/src/address/entities/address.entity';
 import { Role } from '../../apps/users-service/src/roles/entities/role.entity';
 import { SystemModule } from '../../apps/users-service/src/system-modules/entities/system-module.entity';
 import { Permission } from '../../apps/users-service/src/permissions/entities/permission.entity';
@@ -19,7 +20,7 @@ export const AppDataSource = new DataSource({
     username: databaseConfig.user,
     password: databaseConfig.password,
     database: databaseConfig.database,
-    entities: [User, BankAccount, Transaction, LedgerEntry, Customer, Branch, Role, SystemModule, Permission, Notification, AccountProduct],
+    entities: [User, BankAccount, Transaction, LedgerEntry, Customer, Branch, Address, Role, SystemModule, Permission, Notification, AccountProduct],
 
     synchronize: false, // Turn off to prevent sync conflicts or pooler issues
     logging: false,

@@ -1,1 +1,6 @@
-export class CreateAccountsDto {}
+export class CreateAccountDto {
+    customerId: string;
+    branchId: string;
+    accountType: string;
+    initialDeposit: number;
+}

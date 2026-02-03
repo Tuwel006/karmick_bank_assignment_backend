@@ -1,8 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
-// Note: BankAccount is in a different service/module, usually we don't import entities cross-service directly 
-// unless using a shared library or monorepo structure where we accept coupling.
-// For now, we are designing the Branch entity itself. We may need to loosely couple BankAccount.
+import { Address } from '../../address/entities/address.entity';
 
 @Entity('branches')
 export class Branch {
@@ -16,19 +14,11 @@ export class Branch {
     ifsc: string;
 
     @Column({ nullable: true })
-    address: string;
-
-    @Column({ nullable: true })
-    city: string;
-
-    @Column({ nullable: true })
-    state: string;
-
-    @Column({ nullable: true })
-    pincode: string;
-
-    @Column({ nullable: true })
     phoneNumber: string;
+
+    @ManyToOne(() => Address, { nullable: true })
+    @JoinColumn({ name: 'address_id' })
+    address: Address;
 
     @OneToMany(() => User, (user) => user.branch)
     users: User[];

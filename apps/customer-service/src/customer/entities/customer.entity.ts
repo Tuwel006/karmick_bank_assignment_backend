@@ -1,89 +1,162 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    Index,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+  ManyToOne,
+  OneToMany,
+  JoinColumn
 } from 'typeorm';
+import { BankAccount } from '../../../../accounts-service/src/accounts/entities/bank-account.entity';
 
-export enum CustomerType {
-    INDIVIDUAL = 'INDIVIDUAL',
-    BUSINESS = 'BUSINESS',
+export enum CustomerStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  SUSPENDED = 'SUSPENDED',
+  BLOCKED = 'BLOCKED'
 }
 
 export enum KYCStatus {
-    PENDING = 'PENDING',
-    VERIFIED = 'VERIFIED',
-    REJECTED = 'REJECTED',
+  NOT_STARTED = 'NOT_STARTED',
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+  REJECTED = 'REJECTED'
+}
+
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER'
+}
+
+export enum MaritalStatus {
+  SINGLE = 'SINGLE',
+  MARRIED = 'MARRIED',
+  DIVORCED = 'DIVORCED',
+  WIDOWED = 'WIDOWED'
+}
+
+export enum CustomerType {
+  INDIVIDUAL = 'INDIVIDUAL',
+  CORPORATE = 'CORPORATE'
 }
 
 @Entity({ name: 'customers' })
 export class Customer {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Index()
-    @Column({ type: 'uuid' })
-    userId: string; // Reference to users.id
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 20 })
+  customerNumber: string; // Auto-generated unique customer ID
 
-    @Column({ type: 'enum', enum: CustomerType, default: CustomerType.INDIVIDUAL })
-    customerType: CustomerType;
+  // Personal Information
+  @Column({ type: 'varchar', length: 100 })
+  firstName: string;
 
-    @Column({ type: 'varchar', length: 100 })
-    firstName: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  middleName?: string;
 
-    @Column({ type: 'varchar', length: 100, nullable: true })
-    middleName?: string;
+  @Column({ type: 'varchar', length: 100 })
+  lastName: string;
 
-    @Column({ type: 'varchar', length: 100 })
-    lastName: string;
+  @Column({ type: 'date' })
+  dateOfBirth: Date;
 
-    @Column({ type: 'date', nullable: true })
-    dateOfBirth?: Date;
+  @Column({ type: 'enum', enum: Gender })
+  gender: Gender;
 
-    @Column({ type: 'varchar', length: 10, nullable: true })
-    gender?: string; // 'MALE', 'FEMALE', 'OTHER'
+  @Column({ type: 'enum', enum: MaritalStatus, default: MaritalStatus.SINGLE })
+  maritalStatus: MaritalStatus;
 
-    @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
-    panNumber?: string; // PAN card number for KYC
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  nationality: string;
 
-    @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
-    aadharNumber?: string; // Aadhar number for KYC
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  occupation: string;
 
-    @Column({ type: 'enum', enum: KYCStatus, default: KYCStatus.PENDING })
-    kycStatus: KYCStatus;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true })
+  annualIncome?: number;
 
-    @Column({ type: 'text', nullable: true })
-    address?: string;
+  // Contact Information
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 150, unique: true })
+  email: string;
 
-    @Column({ type: 'varchar', length: 100, nullable: true })
-    city?: string;
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 15, unique: true })
+  phone: string;
 
-    @Column({ type: 'varchar', length: 100, nullable: true })
-    state?: string;
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  alternatePhone?: string;
 
-    @Column({ type: 'varchar', length: 10, nullable: true })
-    pincode?: string;
+  // Identity Documents
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  aadharNumber?: string;
 
-    @Column({ type: 'varchar', length: 100, nullable: true })
-    country?: string;
+  @Column({ type: 'varchar', length: 10, nullable: true })
+  panNumber?: string;
 
-    @Column({ type: 'varchar', length: 15, nullable: true })
-    alternatePhone?: string;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  passportNumber?: string;
 
-    @Column({ type: 'varchar', length: 150, nullable: true })
-    alternateEmail?: string;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  drivingLicenseNumber?: string;
 
-    @Column({ type: 'varchar', length: 200, nullable: true })
-    occupation?: string;
+  // Banking Information
+  @Column({ type: 'enum', enum: CustomerStatus, default: CustomerStatus.ACTIVE })
+  status: CustomerStatus;
 
-    @Column({ type: 'numeric', precision: 18, scale: 2, nullable: true })
-    annualIncome?: string;
+  @Column({ type: 'enum', enum: KYCStatus, default: KYCStatus.NOT_STARTED })
+  kycStatus: KYCStatus;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @Column({ type: 'timestamptz', nullable: true })
+  kycVerifiedAt?: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @Column({ type: 'text', nullable: true })
+  kycRemarks?: string;
+
+  // Emergency Contact
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  emergencyContactName?: string;
+
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  emergencyContactPhone?: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  emergencyContactRelation?: string;
+
+  // Document Storage
+  @Column({ type: 'jsonb', nullable: true })
+  documents?: {
+    profilePhoto?: string;
+    aadharCard?: string;
+    panCard?: string;
+    passport?: string;
+    drivingLicense?: string;
+    signature?: string;
+    addressProof?: string;
+    incomeProof?: string;
+  };
+
+  // Relations
+  @Column({ type: 'uuid' })
+  branchId: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  permanentAddressId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  currentAddressId?: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @OneToMany(() => BankAccount, (account) => account.customer)
+  accounts: BankAccount[];
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

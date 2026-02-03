@@ -10,12 +10,19 @@ import { UserStatus } from '../enums/user-status.enum';
 import { UserRole } from '@/utils/constants/roles.enum';
 import { Branch } from '../../branch/entities/branch.entity';
 import { Role as RoleEntity } from '../../roles/entities/role.entity';
+import { Address } from '../../address/entities/address.entity';
 import { ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'users' })
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
+
+    @Column({ type: 'varchar', length: 100, nullable: true })
+    firstName?: string;
+
+    @Column({ type: 'varchar', length: 100, nullable: true })
+    lastName?: string;
 
     @Index({ unique: true })
     @Column({ type: 'varchar', length: 15, unique: true, nullable: true })
@@ -63,4 +70,8 @@ export class User {
     @ManyToOne(() => RoleEntity, (role) => role.users, { nullable: true })
     @JoinColumn({ name: 'role_id' })
     roleEntity: RoleEntity;
+
+    @ManyToOne(() => Address, { nullable: true })
+    @JoinColumn({ name: 'address_id' })
+    address: Address;
 }

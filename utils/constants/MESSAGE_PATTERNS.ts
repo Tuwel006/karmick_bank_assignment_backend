@@ -50,4 +50,11 @@ export const MESSAGE_PATTERNS = {
     UPDATE: 'notification.update',
     DELETE: 'notification.delete',
   },
+  BRANCH: {
+        CREATE: 'branch.create',
+        FIND_ALL: 'branch.find_all',
+        FIND_ONE: 'branch.find_one',
+        UPDATE: 'branch.update',
+        DELETE: 'branch.delete',
+    },
 };

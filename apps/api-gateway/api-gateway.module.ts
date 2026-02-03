@@ -8,6 +8,7 @@ import { AccountsModule } from './accounts/accounts.module';
 import { UsersModule } from './users/users.module';
 import { NotificationModule } from './notification/notification.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { BranchModule } from './branch/branch.module';
 
 @Module({
   controllers: [ApiGatewayController],
@@ -19,7 +20,8 @@ import { TransactionsModule } from './transactions/transactions.module';
     MigrationModule,
     CustomerModule,
     NotificationModule,
-    TransactionsModule
+    TransactionsModule,
+    BranchModule
   ]
 })
 export class ApiGatewayModule { }

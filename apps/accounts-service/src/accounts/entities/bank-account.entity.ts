@@ -12,6 +12,7 @@ import {
 import { LedgerEntry } from '../../../../transactions-service/src/transactions/entities/ledger.entity';
 import { AccountProduct } from './account-product.entity';
 import { Branch } from '../../../../users-service/src/branch/entities/branch.entity';
+import { Customer } from '../../../../customer-service/src/customer/entities/customer.entity';
 
 export enum AccountType {
     SAVINGS = 'SAVINGS',
@@ -31,7 +32,11 @@ export class BankAccount {
 
     @Index()
     @Column({ type: 'uuid' })
-    userId: string; // reference users.users.id (from users-service)
+    customerId: string; // reference to customers.id
+
+    @ManyToOne(() => Customer, (customer) => customer.accounts, { nullable: false })
+    @JoinColumn({ name: 'customerId' })
+    customer: Customer;
 
     @Index()
     @Column({ type: 'uuid', nullable: true })

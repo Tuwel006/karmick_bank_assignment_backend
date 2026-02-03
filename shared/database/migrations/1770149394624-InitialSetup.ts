@@ -1,0 +1,126 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class InitialSetup1770149394624 implements MigrationInterface {
+    name = 'InitialSetup1770149394624'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TYPE "public"."addresses_type_enum" AS ENUM('permanent', 'temporary', 'office')`);
+        await queryRunner.query(`CREATE TABLE "addresses" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "address_line_1" character varying NOT NULL, "address_line_2" character varying, "landmark" character varying, "city" character varying NOT NULL, "state" character varying NOT NULL, "pincode" character varying NOT NULL, "country" character varying NOT NULL, "type" "public"."addresses_type_enum" NOT NULL DEFAULT 'permanent', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_745d8f43d3af10ab8247465e450" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "branches" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "ifsc" character varying(11) NOT NULL, "phoneNumber" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "address_id" uuid, CONSTRAINT "UQ_8387ed27b3d4ca53ec3fc7b029c" UNIQUE ("name"), CONSTRAINT "UQ_1df99f6922bcdfd6acc97a53c5c" UNIQUE ("ifsc"), CONSTRAINT "PK_7f37d3b42defea97f1df0d19535" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "system_modules" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_7efe9f0198a23342871af637de1" UNIQUE ("name"), CONSTRAINT "PK_03181cfef75a5c51913b27419d0" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "permissions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "roleId" character varying NOT NULL, "moduleId" character varying NOT NULL, "canGet" boolean NOT NULL DEFAULT false, "canCreate" boolean NOT NULL DEFAULT false, "canUpdate" boolean NOT NULL DEFAULT false, "canDelete" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "role_id" uuid, "module_id" uuid, CONSTRAINT "UQ_a51dd50d9b1a4f7db6c1c52bed3" UNIQUE ("role_id", "module_id"), CONSTRAINT "PK_920331560282b8bd21bb02290df" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "roles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "description" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_648e3f5447f725579d7d4ffdfb7" UNIQUE ("name"), CONSTRAINT "PK_c1433d71a4838793a49dcad46ab" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."users_role_enum" AS ENUM('customer', 'staff', 'branch_manager', 'admin')`);
+        await queryRunner.query(`CREATE TYPE "public"."users_status_enum" AS ENUM('active', 'inactive', 'blocked', 'suspended')`);
+        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying(100), "lastName" character varying(100), "phone" character varying(15), "email" character varying(150), "username" character varying(50), "passwordHash" character varying(255), "isPhoneVerified" boolean NOT NULL DEFAULT false, "isEmailVerified" boolean NOT NULL DEFAULT false, "customerId" character varying(20), "role" "public"."users_role_enum" NOT NULL DEFAULT 'customer', "status" "public"."users_status_enum" NOT NULL DEFAULT 'active', "lastLoginAt" TIMESTAMP WITH TIME ZONE, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "branch_id" uuid, "role_id" uuid, "address_id" uuid, CONSTRAINT "UQ_a000cca60bcf04454e727699490" UNIQUE ("phone"), CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "UQ_fe0bb3f6520ee0469504521e710" UNIQUE ("username"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_a000cca60bcf04454e72769949" ON "users" ("phone") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_97672ac88f789774dd47f7c8be" ON "users" ("email") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_fe0bb3f6520ee0469504521e71" ON "users" ("username") `);
+        await queryRunner.query(`CREATE TYPE "public"."account_products_producttype_enum" AS ENUM('SAVINGS', 'CURRENT', 'CHILDS_SAVINGS', 'BUSINESS_STARTUP')`);
+        await queryRunner.query(`CREATE TABLE "account_products" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(100) NOT NULL, "code" character varying(20) NOT NULL, "description" text, "productType" "public"."account_products_producttype_enum" NOT NULL DEFAULT 'SAVINGS', "minDailyBalance" numeric(18,2) NOT NULL DEFAULT '0', "minMonthlyAverageBalance" numeric(18,2) NOT NULL DEFAULT '0', "dailyTransactionLimit" numeric(18,2), "monthlyTransactionLimit" numeric(18,2), "minTransactionAmount" numeric(18,2), "maxTransactionAmount" numeric(18,2), "interestRate" numeric(5,2) NOT NULL DEFAULT '0', "allowsOverdraft" boolean NOT NULL DEFAULT false, "overdraftLimit" numeric(18,2) NOT NULL DEFAULT '0', "isActive" boolean NOT NULL DEFAULT true, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_e5fc336ea6db7d652327e98a826" UNIQUE ("name"), CONSTRAINT "UQ_52033fba3408fbef12c46933d70" UNIQUE ("code"), CONSTRAINT "PK_e35c444147b608f74b553d1e8f8" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."customers_gender_enum" AS ENUM('MALE', 'FEMALE', 'OTHER')`);
+        await queryRunner.query(`CREATE TYPE "public"."customers_maritalstatus_enum" AS ENUM('SINGLE', 'MARRIED', 'DIVORCED', 'WIDOWED')`);
+        await queryRunner.query(`CREATE TYPE "public"."customers_status_enum" AS ENUM('ACTIVE', 'INACTIVE', 'SUSPENDED', 'BLOCKED')`);
+        await queryRunner.query(`CREATE TYPE "public"."customers_kycstatus_enum" AS ENUM('NOT_STARTED', 'PENDING', 'VERIFIED', 'REJECTED')`);
+        await queryRunner.query(`CREATE TABLE "customers" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "customerNumber" character varying(20) NOT NULL, "firstName" character varying(100) NOT NULL, "middleName" character varying(100), "lastName" character varying(100) NOT NULL, "dateOfBirth" date NOT NULL, "gender" "public"."customers_gender_enum" NOT NULL, "maritalStatus" "public"."customers_maritalstatus_enum" NOT NULL DEFAULT 'SINGLE', "nationality" character varying(100), "occupation" character varying(100), "annualIncome" numeric(15,2), "email" character varying(150) NOT NULL, "phone" character varying(15) NOT NULL, "alternatePhone" character varying(15), "aadharNumber" character varying(20), "panNumber" character varying(10), "passportNumber" character varying(20), "drivingLicenseNumber" character varying(20), "status" "public"."customers_status_enum" NOT NULL DEFAULT 'ACTIVE', "kycStatus" "public"."customers_kycstatus_enum" NOT NULL DEFAULT 'NOT_STARTED', "kycVerifiedAt" TIMESTAMP WITH TIME ZONE, "kycRemarks" text, "emergencyContactName" character varying(200), "emergencyContactPhone" character varying(15), "emergencyContactRelation" character varying(100), "documents" jsonb, "branchId" uuid NOT NULL, "permanentAddressId" uuid, "currentAddressId" uuid, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_8536b8b85c06969f84f0c098b03" UNIQUE ("email"), CONSTRAINT "UQ_88acd889fbe17d0e16cc4bc9174" UNIQUE ("phone"), CONSTRAINT "PK_133ec679a801fab5e070f73d3ea" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_ac2fd5d477df162f3f6246c728" ON "customers" ("customerNumber") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_8536b8b85c06969f84f0c098b0" ON "customers" ("email") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_88acd889fbe17d0e16cc4bc917" ON "customers" ("phone") `);
+        await queryRunner.query(`CREATE TYPE "public"."bank_accounts_accounttype_enum" AS ENUM('SAVINGS', 'CURRENT')`);
+        await queryRunner.query(`CREATE TYPE "public"."bank_accounts_status_enum" AS ENUM('ACTIVE', 'FROZEN', 'CLOSED')`);
+        await queryRunner.query(`CREATE TABLE "bank_accounts" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "customerId" uuid NOT NULL, "branchId" uuid, "productId" uuid, "accountNumber" character varying(20) NOT NULL, "ifscCode" character varying(11) NOT NULL DEFAULT 'KRMK0000123', "accountType" "public"."bank_accounts_accounttype_enum" NOT NULL DEFAULT 'SAVINGS', "currency" character varying(3) NOT NULL DEFAULT 'INR', "balance" numeric(18,2) NOT NULL DEFAULT '0', "status" "public"."bank_accounts_status_enum" NOT NULL DEFAULT 'ACTIVE', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_c872de764f2038224a013ff25ed" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_1faad0248bc84d65758400b273" ON "bank_accounts" ("customerId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_80423474f2f93d3cc877a32bf7" ON "bank_accounts" ("branchId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_44da1ee78c99ed158d15358284" ON "bank_accounts" ("productId") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_78237756b3dad116a3f5f6398e" ON "bank_accounts" ("accountNumber") `);
+        await queryRunner.query(`CREATE INDEX "IDX_9dcc47dcf41085bb47109de56e" ON "bank_accounts" ("status") `);
+        await queryRunner.query(`CREATE TYPE "public"."ledger_entries_entrytype_enum" AS ENUM('DEBIT', 'CREDIT')`);
+        await queryRunner.query(`CREATE TABLE "ledger_entries" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "transactionId" uuid NOT NULL, "accountId" uuid NOT NULL, "entryType" "public"."ledger_entries_entrytype_enum" NOT NULL, "amount" numeric(18,2) NOT NULL, "balanceBefore" numeric(18,2) NOT NULL, "balanceAfter" numeric(18,2) NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_6efcb84411d3f08b08450ae75d5" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_ce01dd5f8bde23f503bf01ffac" ON "ledger_entries" ("transactionId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_c5434f6dfb7b6f304a450d9304" ON "ledger_entries" ("accountId") `);
+        await queryRunner.query(`CREATE TYPE "public"."transactions_type_enum" AS ENUM('DEPOSIT', 'WITHDRAW', 'TRANSFER')`);
+        await queryRunner.query(`CREATE TYPE "public"."transactions_status_enum" AS ENUM('PENDING', 'SUCCESS', 'FAILED', 'REVERSED')`);
+        await queryRunner.query(`CREATE TABLE "transactions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "txnRef" character varying(40) NOT NULL, "type" "public"."transactions_type_enum" NOT NULL, "fromAccountId" uuid, "toAccountId" uuid, "amount" numeric(18,2) NOT NULL, "status" "public"."transactions_status_enum" NOT NULL DEFAULT 'PENDING', "narration" character varying(255), "metadata" jsonb, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_a219afd8dd77ed80f5a862f1db9" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_f13c87a196d16a770c73ca158b" ON "transactions" ("txnRef") `);
+        await queryRunner.query(`CREATE INDEX "IDX_2d5fa024a84dceb158b2b95f34" ON "transactions" ("type") `);
+        await queryRunner.query(`CREATE INDEX "IDX_4e3a0a2c3c335671543aa96064" ON "transactions" ("fromAccountId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_0b21fbaa4a042efac978a5252c" ON "transactions" ("toAccountId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_da87c55b3bbbe96c6ed88ea7ee" ON "transactions" ("status") `);
+        await queryRunner.query(`CREATE TYPE "public"."notifications_type_enum" AS ENUM('INFO', 'WARNING', 'ERROR', 'TRANSACTION')`);
+        await queryRunner.query(`CREATE TYPE "public"."notifications_status_enum" AS ENUM('UNREAD', 'READ')`);
+        await queryRunner.query(`CREATE TABLE "notifications" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userId" uuid NOT NULL, "type" "public"."notifications_type_enum" NOT NULL DEFAULT 'INFO', "title" character varying(255) NOT NULL, "message" text NOT NULL, "status" "public"."notifications_status_enum" NOT NULL DEFAULT 'UNREAD', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_6a72c3c0f683f6462415e653c3a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_692a909ee0fa9383e7859f9b40" ON "notifications" ("userId") `);
+        await queryRunner.query(`ALTER TABLE "branches" ADD CONSTRAINT "FK_c03aef26af49e109f784a101ecd" FOREIGN KEY ("address_id") REFERENCES "addresses"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "permissions" ADD CONSTRAINT "FK_f10931e7bb05a3b434642ed2797" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "permissions" ADD CONSTRAINT "FK_738f46bb9ac6ea356f1915835d0" FOREIGN KEY ("module_id") REFERENCES "system_modules"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "users" ADD CONSTRAINT "FK_5a58f726a41264c8b3e86d4a1de" FOREIGN KEY ("branch_id") REFERENCES "branches"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "users" ADD CONSTRAINT "FK_a2cecd1a3531c0b041e29ba46e1" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "users" ADD CONSTRAINT "FK_1b05689f6b6456680d538c3d2ea" FOREIGN KEY ("address_id") REFERENCES "addresses"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "bank_accounts" ADD CONSTRAINT "FK_1faad0248bc84d65758400b2731" FOREIGN KEY ("customerId") REFERENCES "customers"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "bank_accounts" ADD CONSTRAINT "FK_80423474f2f93d3cc877a32bf78" FOREIGN KEY ("branchId") REFERENCES "branches"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "bank_accounts" ADD CONSTRAINT "FK_44da1ee78c99ed158d153582843" FOREIGN KEY ("productId") REFERENCES "account_products"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "ledger_entries" ADD CONSTRAINT "FK_ce01dd5f8bde23f503bf01ffacc" FOREIGN KEY ("transactionId") REFERENCES "transactions"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "ledger_entries" ADD CONSTRAINT "FK_c5434f6dfb7b6f304a450d93046" FOREIGN KEY ("accountId") REFERENCES "bank_accounts"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "ledger_entries" DROP CONSTRAINT "FK_c5434f6dfb7b6f304a450d93046"`);
+        await queryRunner.query(`ALTER TABLE "ledger_entries" DROP CONSTRAINT "FK_ce01dd5f8bde23f503bf01ffacc"`);
+        await queryRunner.query(`ALTER TABLE "bank_accounts" DROP CONSTRAINT "FK_44da1ee78c99ed158d153582843"`);
+        await queryRunner.query(`ALTER TABLE "bank_accounts" DROP CONSTRAINT "FK_80423474f2f93d3cc877a32bf78"`);
+        await queryRunner.query(`ALTER TABLE "bank_accounts" DROP CONSTRAINT "FK_1faad0248bc84d65758400b2731"`);
+        await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT "FK_1b05689f6b6456680d538c3d2ea"`);
+        await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT "FK_a2cecd1a3531c0b041e29ba46e1"`);
+        await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT "FK_5a58f726a41264c8b3e86d4a1de"`);
+        await queryRunner.query(`ALTER TABLE "permissions" DROP CONSTRAINT "FK_738f46bb9ac6ea356f1915835d0"`);
+        await queryRunner.query(`ALTER TABLE "permissions" DROP CONSTRAINT "FK_f10931e7bb05a3b434642ed2797"`);
+        await queryRunner.query(`ALTER TABLE "branches" DROP CONSTRAINT "FK_c03aef26af49e109f784a101ecd"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_692a909ee0fa9383e7859f9b40"`);
+        await queryRunner.query(`DROP TABLE "notifications"`);
+        await queryRunner.query(`DROP TYPE "public"."notifications_status_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."notifications_type_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_da87c55b3bbbe96c6ed88ea7ee"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_0b21fbaa4a042efac978a5252c"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_4e3a0a2c3c335671543aa96064"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_2d5fa024a84dceb158b2b95f34"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_f13c87a196d16a770c73ca158b"`);
+        await queryRunner.query(`DROP TABLE "transactions"`);
+        await queryRunner.query(`DROP TYPE "public"."transactions_status_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."transactions_type_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_c5434f6dfb7b6f304a450d9304"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_ce01dd5f8bde23f503bf01ffac"`);
+        await queryRunner.query(`DROP TABLE "ledger_entries"`);
+        await queryRunner.query(`DROP TYPE "public"."ledger_entries_entrytype_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_9dcc47dcf41085bb47109de56e"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_78237756b3dad116a3f5f6398e"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_44da1ee78c99ed158d15358284"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_80423474f2f93d3cc877a32bf7"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_1faad0248bc84d65758400b273"`);
+        await queryRunner.query(`DROP TABLE "bank_accounts"`);
+        await queryRunner.query(`DROP TYPE "public"."bank_accounts_status_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."bank_accounts_accounttype_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_88acd889fbe17d0e16cc4bc917"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_8536b8b85c06969f84f0c098b0"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_ac2fd5d477df162f3f6246c728"`);
+        await queryRunner.query(`DROP TABLE "customers"`);
+        await queryRunner.query(`DROP TYPE "public"."customers_kycstatus_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."customers_status_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."customers_maritalstatus_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."customers_gender_enum"`);
+        await queryRunner.query(`DROP TABLE "account_products"`);
+        await queryRunner.query(`DROP TYPE "public"."account_products_producttype_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_fe0bb3f6520ee0469504521e71"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_97672ac88f789774dd47f7c8be"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_a000cca60bcf04454e72769949"`);
+        await queryRunner.query(`DROP TABLE "users"`);
+        await queryRunner.query(`DROP TYPE "public"."users_status_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
+        await queryRunner.query(`DROP TABLE "roles"`);
+        await queryRunner.query(`DROP TABLE "permissions"`);
+        await queryRunner.query(`DROP TABLE "system_modules"`);
+        await queryRunner.query(`DROP TABLE "branches"`);
+        await queryRunner.query(`DROP TABLE "addresses"`);
+        await queryRunner.query(`DROP TYPE "public"."addresses_type_enum"`);
+    }
+
+}

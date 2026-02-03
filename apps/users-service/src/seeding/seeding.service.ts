@@ -44,6 +44,7 @@ export class SeedingService implements OnModuleInit {
       const accountModule = await this.createModuleIfNotExists('account');
       const transactionModule = await this.createModuleIfNotExists('transaction');
       const customerModule = await this.createModuleIfNotExists('customer');
+      const notificationModule = await this.createModuleIfNotExists('notification');
 
       // Create roles
       const superAdminRole = await this.createRoleIfNotExists('super_admin', 'Super Administrator');
@@ -56,6 +57,7 @@ export class SeedingService implements OnModuleInit {
       await this.createPermissionIfNotExists(superAdminRole.id, accountModule.id, true, true, true, true);
       await this.createPermissionIfNotExists(superAdminRole.id, transactionModule.id, true, true, true, true);
       await this.createPermissionIfNotExists(superAdminRole.id, customerModule.id, true, true, true, true);
+      await this.createPermissionIfNotExists(superAdminRole.id, notificationModule.id, true, true, true, true);
 
       // Branch admin permissions (limited)
       await this.createPermissionIfNotExists(branchAdminRole.id, userModule.id, true, true, true, false);
@@ -66,7 +68,7 @@ export class SeedingService implements OnModuleInit {
 
       // Customer permissions (very limited)
       await this.createPermissionIfNotExists(customerRole.id, accountModule.id, false, true, false, false);
-      await this.createPermissionIfNotExists(customerRole.id, transactionModule.id, false, true, false, false);
+      await this.createPermissionIfNotExists(customerRole.id, transactionModule.id, true, true, false, false);
 
       // Create default branches
       await this.createDefaultBranches();
@@ -102,7 +104,7 @@ export class SeedingService implements OnModuleInit {
         phone: '9999999999',
         password: 'Admin@123',
         roleEntity: roles.super_admin,
-        branch: null,
+        branch: undefined,
       },
       {
         firstName: 'Branch',
@@ -111,7 +113,7 @@ export class SeedingService implements OnModuleInit {
         phone: '8888888888',
         password: 'Admin@123',
         roleEntity: roles.branch_admin,
-        branch: headOffice,
+        branch: headOffice || undefined,
       },
       {
         firstName: 'Default',
@@ -120,15 +122,23 @@ export class SeedingService implements OnModuleInit {
         phone: '7777777777',
         password: 'Admin@123',
         roleEntity: roles.customer,
-        branch: headOffice,
+        branch: headOffice || undefined,
       }
     ];
 
     const hashedPassword = await bcrypt.hash('Admin@123', 10);
 
     for (const userData of usersToCreate) {
-      const existing = await this.userRepository.findOne({ where: { email: userData.email } });
+      const existing = await this.userRepository.findOne({
+        where: [
+          { email: userData.email },
+          { phone: userData.phone }
+        ]
+      });
       if (!existing && userData.roleEntity) {
+        // cast branch explicitly to avoid type error with DeepPartial
+        const branchVal = userData.branch as unknown as Branch;
+
         const user = this.userRepository.create({
           firstName: userData.firstName,
           lastName: userData.lastName,
@@ -136,7 +146,7 @@ export class SeedingService implements OnModuleInit {
           phone: userData.phone,
           passwordHash: hashedPassword,
           roleEntity: userData.roleEntity,
-          branch: userData.branch,
+          branch: branchVal,
           status: UserStatus.ACTIVE
         });
         await this.userRepository.save(user);

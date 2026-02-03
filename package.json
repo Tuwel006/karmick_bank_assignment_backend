@@ -44,7 +44,9 @@
     "pm2:delete": "pm2 delete all",
     "pm2:logs": "pm2 logs",
     "pm2:monit": "pm2 monit",
-    "pm2:status": "pm2 status"
+    "pm2:status": "pm2 status",
+    "schema:drop": "ts-node -r tsconfig-paths/register --project tsconfig.migration.json ./node_modules/typeorm/cli.js schema:drop -d shared/database/migration-data-source.ts",
+    "reset:db": "npm run schema:drop && npm run migration:run"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

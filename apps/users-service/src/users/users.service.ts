@@ -55,7 +55,26 @@ export class UsersService {
     console.log('UsersService: Finding user by email:', email);
     return await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'username', 'email', 'passwordHash', 'role', 'phone', 'isPhoneVerified', 'isEmailVerified', 'customerId', 'status', 'createdAt', 'updatedAt'],
+      relations: ['roleEntity'],
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        passwordHash: true,
+        role: true,
+        phone: true,
+        isPhoneVerified: true,
+        isEmailVerified: true,
+        customerId: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        roleEntity: {
+          id: true,
+          name: true,
+          permissions: true
+        }
+      } as any,
     });
   }
 }

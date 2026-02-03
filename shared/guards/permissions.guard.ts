@@ -24,12 +24,15 @@ export class PermissionsGuard implements CanActivate {
     }
 
     // Super admin has all permissions
-    if (user.role?.name === 'super_admin') {
+    const roleName = user.role?.name || (typeof user.role === 'string' ? user.role : '');
+
+    if (roleName === 'super_admin') {
       return true;
     }
 
     // Check if user has the required permission
-    const hasPermission = user.role?.permissions?.some(permission => {
+    const permissions = user.role?.permissions || [];
+    const hasPermission = permissions.some(permission => {
       let actionProperty = requiredPermission.action;
       if (!actionProperty.startsWith('can')) {
         actionProperty = `can${actionProperty.charAt(0).toUpperCase() + actionProperty.slice(1)}` as any;
@@ -39,7 +42,10 @@ export class PermissionsGuard implements CanActivate {
       if (actionProperty === 'canRead') actionProperty = 'canGet' as any;
       if (actionProperty === 'canDelete') actionProperty = 'canDelete' as any; // already starts with can
 
-      return permission.module?.name === requiredPermission.module && permission[actionProperty];
+      // Check both if permission.module is an object with name, or if it might be populated differently
+      const moduleName = permission.module?.name || permission.module;
+
+      return moduleName === requiredPermission.module && permission[actionProperty];
     });
 
     if (!hasPermission) {

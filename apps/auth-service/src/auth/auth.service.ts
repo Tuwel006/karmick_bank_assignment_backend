@@ -46,7 +46,13 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
-      const payload = { sub: user.id, username: user.username, email: user.email, role: user.role, status: user.status };
+      const payload = {
+        sub: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.roleEntity || user.role,
+        status: user.status
+      };
       const access_token = this.jwtService.sign(payload);
 
       // Remove sensitive data from response

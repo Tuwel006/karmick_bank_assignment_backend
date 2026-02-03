@@ -1,10 +1,14 @@
 export const MESSAGE_PATTERNS = {
   accounts: {
     CREATE: 'accounts.create',
+    CREATE_WITH_CUSTOMER: 'accounts.create_with_customer',
     FIND_ALL: 'accounts.find_all',
+    FIND_WITH_CUSTOMERS: 'accounts.find_with_customers',
     FIND_ONE: 'accounts.find_one',
     UPDATE: 'accounts.update',
+    UPDATE_STATUS: 'accounts.update_status',
     DELETE: 'accounts.delete',
+    GET_BALANCE: 'accounts.get_balance',
   },
   users: {
     CREATE: 'users.create',
@@ -35,13 +39,19 @@ export const MESSAGE_PATTERNS = {
     FIND_ONE: 'customer.find_one',
     UPDATE: 'customer.update',
     DELETE: 'customer.delete',
+    GET_KYC_STATUS: 'customer.get_kyc_status',
+    GET_STATS: 'customer.get_stats',
   },
   transactions: {
     CREATE: 'transactions.create',
-    FIND_ALL: 'transactions.find_all',
+    DEPOSIT: 'transactions.deposit',
+    WITHDRAW: 'transactions.withdraw',
+    TRANSFER: 'transactions.transfer',
+    FIND_ALL: 'transactions.find_all', // acts as history
     FIND_ONE: 'transactions.find_one',
     UPDATE: 'transactions.update',
     DELETE: 'transactions.delete',
+    GET_STATS: 'transactions.get_stats',
   },
   notification: {
     CREATE: 'notification.create',
@@ -51,10 +61,10 @@ export const MESSAGE_PATTERNS = {
     DELETE: 'notification.delete',
   },
   BRANCH: {
-        CREATE: 'branch.create',
-        FIND_ALL: 'branch.find_all',
-        FIND_ONE: 'branch.find_one',
-        UPDATE: 'branch.update',
-        DELETE: 'branch.delete',
-    },
+    CREATE: 'branch.create',
+    FIND_ALL: 'branch.find_all',
+    FIND_ONE: 'branch.find_one',
+    UPDATE: 'branch.update',
+    DELETE: 'branch.delete',
+  },
 };

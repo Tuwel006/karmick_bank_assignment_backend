@@ -1,59 +1,40 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { TransactionsService, DepositDto, WithdrawDto, TransferDto } from './transactions.service';
-import { PaginationDto } from '../../../../shared/dto/pagination.dto';
-import { RequirePermissions } from '../../../../shared/guards/permissions.decorator';
-import { PermissionsGuard } from '../../../../shared/guards/permissions.guard';
+import { MESSAGE_PATTERNS } from '@/utils/constants/MESSAGE_PATTERNS';
 
-@ApiTags('Transactions')
-@ApiBearerAuth()
-@Controller('transactions')
-@UseGuards(PermissionsGuard)
+@Controller()
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(private readonly transactionsService: TransactionsService) { }
 
-  @Post('deposit')
-  @RequirePermissions('transaction', 'canCreate')
-  @ApiOperation({ summary: 'Process deposit transaction' })
-  @ApiResponse({ status: 201, description: 'Deposit processed successfully' })
-  async deposit(@Body() depositDto: DepositDto) {
+  @MessagePattern(MESSAGE_PATTERNS.transactions.DEPOSIT)
+  async deposit(@Payload() depositDto: DepositDto) {
     return this.transactionsService.deposit(depositDto);
   }
 
-  @Post('withdraw')
-  @RequirePermissions('transaction', 'canCreate')
-  @ApiOperation({ summary: 'Process withdrawal transaction' })
-  @ApiResponse({ status: 201, description: 'Withdrawal processed successfully' })
-  async withdraw(@Body() withdrawDto: WithdrawDto) {
+  @MessagePattern(MESSAGE_PATTERNS.transactions.WITHDRAW)
+  async withdraw(@Payload() withdrawDto: WithdrawDto) {
     return this.transactionsService.withdraw(withdrawDto);
   }
 
-  @Post('transfer')
-  @RequirePermissions('transaction', 'canCreate')
-  @ApiOperation({ summary: 'Process transfer transaction' })
-  @ApiResponse({ status: 201, description: 'Transfer completed successfully' })
-  async transfer(@Body() transferDto: TransferDto) {
+  @MessagePattern(MESSAGE_PATTERNS.transactions.TRANSFER)
+  async transfer(@Payload() transferDto: TransferDto) {
     return this.transactionsService.transfer(transferDto);
   }
 
-  @Get()
-  @RequirePermissions('transaction', 'canGet')
-  @ApiOperation({ summary: 'Get all transactions with filters' })
-  @ApiResponse({ status: 200, description: 'Transactions retrieved successfully' })
-  async findAll(
-    @Query('branchId') branchId?: string,
-    @Query('accountId') accountId?: string,
-    @Query('customerId') customerId?: string,
-    @Query() pagination?: PaginationDto
-  ) {
+  @MessagePattern(MESSAGE_PATTERNS.transactions.FIND_ALL)
+  async findAll(@Payload() payload: any) {
+    const { branchId, accountId, customerId, ...pagination } = payload;
     return this.transactionsService.findAll(branchId, accountId, customerId, pagination);
   }
 
-  @Get(':id')
-  @RequirePermissions('transaction', 'canGet')
-  @ApiOperation({ summary: 'Get transaction by ID' })
-  @ApiResponse({ status: 200, description: 'Transaction retrieved successfully' })
-  async findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(id);
+  @MessagePattern(MESSAGE_PATTERNS.transactions.FIND_ONE)
+  async findOne(@Payload() data: { id: string }) {
+    return this.transactionsService.findOne(data.id);
+  }
+
+  @MessagePattern(MESSAGE_PATTERNS.transactions.GET_STATS)
+  async getStats() {
+    return this.transactionsService.getStats();
   }
 }

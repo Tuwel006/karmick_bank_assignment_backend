@@ -28,7 +28,7 @@ export class CustomerService {
     @InjectRepository(Customer)
     private customerRepository: Repository<Customer>,
     private dataSource: DataSource,
-  ) {}
+  ) { }
 
   async create(createCustomerDto: CreateCustomerDto) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -158,6 +158,16 @@ export class CustomerService {
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
       throw new BadRequestException(ResponseHelper.error('Failed to fetch KYC status', error.message));
+    }
+  }
+
+  async getStats() {
+    try {
+      const total = await this.customerRepository.count();
+      const active = await this.customerRepository.count({ where: { status: CustomerStatus.ACTIVE } });
+      return ResponseHelper.success({ total, active }, 'Customer stats retrieved successfully');
+    } catch (error) {
+      throw new BadRequestException(ResponseHelper.error('Failed to fetch customer stats', error.message));
     }
   }
 

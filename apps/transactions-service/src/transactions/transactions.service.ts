@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, MoreThanOrEqual } from 'typeorm';
 import { Transaction, TransactionType, TransactionStatus } from './entities/transactions.entity';
 import { LedgerEntry, LedgerEntryType } from './entities/ledger.entity';
 import { BankAccount } from '../../../accounts-service/src/accounts/entities/bank-account.entity';
@@ -36,7 +36,7 @@ export class TransactionsService {
     @InjectRepository(BankAccount)
     private accountRepository: Repository<BankAccount>,
     private dataSource: DataSource,
-  ) {}
+  ) { }
 
   async deposit(depositDto: DepositDto) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -262,7 +262,7 @@ export class TransactionsService {
       }
 
       if (customerId) {
-        query.andWhere('account.userId = :customerId', { customerId });
+        query.andWhere('account.customerId = :customerId', { customerId });
       }
 
       if (pagination) {
@@ -293,6 +293,21 @@ export class TransactionsService {
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
       throw new BadRequestException(ResponseHelper.error('Failed to fetch transaction', error.message));
+    }
+  }
+
+  async getStats() {
+    try {
+      const total = await this.transactionRepository.count();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayCount = await this.transactionRepository.count({
+        where: { createdAt: MoreThanOrEqual(today) }
+      });
+
+      return ResponseHelper.success({ total, today: todayCount }, 'Transaction stats retrieved successfully');
+    } catch (error) {
+      throw new BadRequestException(ResponseHelper.error('Failed to fetch transaction stats', error.message));
     }
   }
 
